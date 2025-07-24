@@ -1,4 +1,8 @@
+console.log("Olá, o ficheiro main.js foi carregado e executado!");
+
 document.addEventListener('DOMContentLoaded', function() {
+    // ... o resto do seu código continua aqui ...
+});document.addEventListener('DOMContentLoaded', function() {
     // --- VARIÁVEIS E ELEMENTOS GLOBAIS ---
     let allProducts = [];
     let cart = JSON.parse(localStorage.getItem('turboostCart')) || [];
