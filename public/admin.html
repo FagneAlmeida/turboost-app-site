@@ -4,27 +4,187 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - Turboost</title>
-    <!-- Carrega o nosso CSS compilado, não o CDN -->
     <link rel="stylesheet" href="/css/output.css">
     <style>
-        /* Estilos específicos do admin */
         .tab-btn.active { border-color: #FFC700; background-color: #FFC700; color: #1a1a1a; }
+        .modal-content { transition: transform 0.3s ease-out, opacity 0.3s ease-out; }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800">
 
-    <!-- Todo o seu conteúdo HTML do admin.html vai aqui... -->
-    <!-- ... (formulários de login, tabelas de produtos, etc.) ... -->
+    <div id="auth-overlay" class="fixed inset-0 bg-gray-900 bg-opacity-80 flex items-center justify-center z-50">
+        <div id="login-container" class="bg-white p-8 rounded-lg shadow-xl max-w-sm w-full hidden opacity-0 -translate-y-5 transition-all duration-300">
+            <h2 class="font-anton text-3xl text-center text-gray-800 mb-6">LOGIN DE ADMINISTRADOR</h2>
+            <form id="login-form" class="space-y-4">
+                <input type="text" id="username" placeholder="Utilizador" class="w-full p-3 border rounded-md focus:ring-2 focus:ring-yellow-500" required>
+                <input type="password" id="password" placeholder="Senha" class="w-full p-3 border rounded-md focus:ring-2 focus:ring-yellow-500" required>
+                <p id="login-error" class="text-red-500 text-sm text-center h-4"></p>
+                <button type="submit" class="w-full bg-yellow-500 text-primary font-bold py-3 rounded-md hover:bg-yellow-600 transition-colors">Entrar</button>
+            </form>
+        </div>
+        <div id="register-container" class="bg-white p-8 rounded-lg shadow-xl max-w-sm w-full hidden opacity-0 -translate-y-5 transition-all duration-300">
+            <h2 class="font-anton text-3xl text-center text-gray-800 mb-6">REGISTAR PRIMEIRO ADMIN</h2>
+            <form id="register-form" class="space-y-4">
+                <input type="text" id="reg-username" placeholder="Crie um Utilizador" class="w-full p-3 border rounded-md" required>
+                <input type="password" id="reg-password" placeholder="Crie uma Senha" class="w-full p-3 border rounded-md" required>
+                <p id="register-error" class="text-red-500 text-sm text-center h-4"></p>
+                <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 rounded-md hover:bg-blue-700">Registar</button>
+            </form>
+        </div>
+    </div>
 
-    <!-- Scripts Carregados no Final e na Ordem Correta -->
+    <div id="admin-area" class="hidden">
+        <header class="bg-white shadow-md">
+            <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+                <h1 class="text-2xl font-bold">Painel de Administração</h1>
+                <button id="logout-btn" class="text-sm bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600">Sair</button>
+            </div>
+        </header>
+
+        <main class="container mx-auto px-6 py-8">
+            <div class="border-b border-gray-300 mb-6">
+                <nav class="flex space-x-4">
+                    <button id="tab-products" class="tab-btn active font-semibold py-2 px-4 border-b-4 border-transparent hover:border-yellow-500">Produtos</button>
+                    <button id="tab-settings" class="tab-btn font-semibold py-2 px-4 border-b-4 border-transparent hover:border-yellow-500">Configurações</button>
+                </nav>
+            </div>
+
+            <div id="products-view">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-bold">Gerir Produtos</h2>
+                    <button id="add-product-btn" class="bg-green-500 text-white font-bold py-2 px-4 rounded-md hover:bg-green-600">Adicionar Produto</button>
+                </div>
+                <div id="product-list" class="bg-white rounded-lg shadow">
+                    </div>
+            </div>
+
+            <div id="settings-view" class="hidden">
+                 <form id="settings-form" class="bg-white p-8 rounded-lg shadow-md space-y-6">
+                    <h3 class="text-xl font-bold text-gray-800 border-b pb-3">Configurações da Loja</h3>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Logotipo</label>
+                            <input type="file" id="logoFile" name="logoFile" class="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-yellow-50 file:text-yellow-700 hover:file:bg-yellow-100">
+                            <img id="preview-logo" class="mt-4 h-16 hidden" alt="Pré-visualização do Logo">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Favicon</label>
+                            <input type="file" id="faviconFile" name="faviconFile" class="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-yellow-50 file:text-yellow-700 hover:file:bg-yellow-100">
+                            <img id="preview-favicon" class="mt-4 h-8 w-8 hidden" alt="Pré-visualização do Favicon">
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 class="font-bold text-gray-700">Endereço de Origem (para cálculo de frete)</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2">
+                            <div>
+                                <label for="originCep" class="text-sm">CEP de Origem</label>
+                                <input type="text" id="originCep" name="originCep" class="mt-1 w-full rounded border-gray-300">
+                            </div>
+                            <div>
+                                <label for="companyStreet" class="text-sm">Rua</label>
+                                <input type="text" id="companyStreet" name="companyStreet" class="mt-1 w-full rounded border-gray-300">
+                            </div>
+                             <div>
+                                <label for="companyNumber" class="text-sm">Número</label>
+                                <input type="text" id="companyNumber" name="companyNumber" class="mt-1 w-full rounded border-gray-300">
+                            </div>
+                        </div>
+                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2">
+                             <div>
+                                <label for="companyComplement" class="text-sm">Complemento</label>
+                                <input type="text" id="companyComplement" name="companyComplement" class="mt-1 w-full rounded border-gray-300">
+                            </div>
+                             <div>
+                                <label for="companyNeighborhood" class="text-sm">Bairro</label>
+                                <input type="text" id="companyNeighborhood" name="companyNeighborhood" class="mt-1 w-full rounded border-gray-300">
+                            </div>
+                             <div>
+                                <label for="companyCityState" class="text-sm">Cidade / Estado</label>
+                                <input type="text" id="companyCityState" name="companyCityState" class="mt-1 w-full rounded border-gray-300 bg-gray-100" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h4 class="font-bold text-gray-700">Redes Sociais</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2">
+                            <div>
+                                <label for="socialFacebook" class="text-sm">Facebook URL</label>
+                                <input type="url" id="socialFacebook" name="socialFacebook" class="mt-1 w-full rounded border-gray-300">
+                            </div>
+                            <div>
+                                <label for="socialInstagram" class="text-sm">Instagram URL</label>
+                                <input type="url" id="socialInstagram" name="socialInstagram" class="mt-1 w-full rounded border-gray-300">
+                            </div>
+                            <div>
+                                <label for="socialYoutube" class="text-sm">YouTube URL</label>
+                                <input type="url" id="socialYoutube" name="socialYoutube" class="mt-1 w-full rounded border-gray-300">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-t">
+                        <button type="submit" class="bg-blue-600 text-white font-bold py-2 px-6 rounded hover:bg-blue-700">Salvar Configurações</button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <div id="product-modal" class="fixed inset-0 bg-gray-900 bg-opacity-70 flex items-center justify-center z-40 hidden opacity-0 transition-opacity duration-300">
+        <div class="modal-content bg-white p-8 rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto -translate-y-10">
+            <h2 id="modal-title" class="text-2xl font-bold mb-6">Adicionar Novo Produto</h2>
+            <form id="product-form" class="space-y-4">
+                <input type="hidden" id="product-id">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <input type="text" id="marca" name="marca" placeholder="Marca" class="w-full p-2 border rounded">
+                    <input type="text" id="modelo" name="modelo" placeholder="Modelo" class="w-full p-2 border rounded">
+                </div>
+                <input type="text" id="ano" name="ano" placeholder="Anos compatíveis (ex: 2020, 2021, 2022)" class="w-full p-2 border rounded">
+                <input type="text" id="nomeProduto" name="nomeProduto" placeholder="Nome do Produto" class="w-full p-2 border rounded" required>
+                <textarea id="descricao" name="descricao" placeholder="Descrição" class="w-full p-2 border rounded" rows="4"></textarea>
+                <input type="number" id="preco" name="preco" placeholder="Preço (ex: 1299.90)" step="0.01" class="w-full p-2 border rounded" required>
+                
+                <label class="font-semibold">Imagens:</label>
+                <input type="file" id="imagemURL1" name="imagemURL1" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:font-semibold file:bg-blue-50 file:text-blue-700">
+                <input type="file" id="imagemURL2" name="imagemURL2" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:font-semibold file:bg-blue-50 file:text-blue-700">
+                <input type="file" id="imagemURL3" name="imagemURL3" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:font-semibold file:bg-blue-50 file:text-blue-700">
+                
+                <label class="font-semibold">URL do Vídeo (YouTube):</label>
+                <input type="url" id="videoURL" name="videoURL" placeholder="https://www.youtube.com/watch?v=..." class="w-full p-2 border rounded">
+
+                <label class="font-semibold">Sons:</label>
+                <input type="file" id="somOriginal" name="somOriginal" class="block w-full text-sm text-gray-500">
+                <input type="file" id="somLenta" name="somLenta" class="block w-full text-sm text-gray-500">
+                <input type="file" id="somAcelerando" name="somAcelerando" class="block w-full text-sm text-gray-500">
+
+                <label class="font-semibold">Dimensões para Frete (cm/kg):</label>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <input type="number" id="peso" name="peso" placeholder="Peso (kg)" step="0.01" class="w-full p-2 border rounded">
+                    <input type="number" id="comprimento" name="comprimento" placeholder="Comprimento" class="w-full p-2 border rounded">
+                    <input type="number" id="altura" name="altura" placeholder="Altura" class="w-full p-2 border rounded">
+                    <input type="number" id="largura" name="largura" placeholder="Largura" class="w-full p-2 border rounded">
+                </div>
+                
+                <div class="flex items-center gap-2">
+                    <input type="checkbox" id="isFeatured" name="isFeatured" class="h-4 w-4 rounded">
+                    <label for="isFeatured">Marcar como Destaque</label>
+                </div>
+
+                <div class="flex justify-end gap-4 pt-4">
+                    <button type="button" id="cancel-btn" class="bg-gray-300 py-2 px-6 rounded hover:bg-gray-400">Cancelar</button>
+                    <button type="submit" class="bg-blue-600 text-white font-bold py-2 px-6 rounded hover:bg-blue-700">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
-    
-    <!-- 1. Carrega a nossa configuração central -->
     <script src="/js/firebase-init.js"></script>
-    
-    <!-- 2. Carrega a lógica específica da página de administração -->
     <script src="/js/admin.js"></script>
 </body>
 </html>
