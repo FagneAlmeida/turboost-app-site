@@ -10,12 +10,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     
-    <!-- Link para o CSS com caminho relativo (sem a barra inicial) -->
-    <link rel="stylesheet" href="css/output.css">
+    <!-- CORREÇÃO: Caminho absoluto para o CSS, garantindo que ele seja encontrado pelo servidor -->
+    <link rel="stylesheet" href="/css/output.css">
 </head>
 <body class="antialiased font-roboto bg-primary text-text-light pt-20">
-
-    <!-- O restante do seu HTML continua aqui... -->
 
     <!-- =========== HEADER =========== -->
     <header id="header" class="bg-primary fixed top-0 left-0 right-0 z-50 shadow-lg shadow-black/30">
@@ -66,7 +64,6 @@
     </header>
 
     <main>
-        <!-- (O restante do seu conteúdo main continua aqui, sem alterações) -->
         <!-- =========== HERO SECTION =========== -->
         <section id="hero" class="hero-bg h-screen flex items-center justify-center">
             <div class="container mx-auto px-6 text-center">
@@ -209,8 +206,8 @@
         </div>
     </footer>
 
-    <!-- (Modais e Painel do Carrinho continuam aqui, sem alterações) -->
-    <!-- =========== CART PANEL =========== -->
+    <!-- =========== PAINÉIS E MODAIS =========== -->
+    <!-- (O HTML para o painel do carrinho e os modais continua aqui, sem alterações na sua estrutura) -->
     <div id="cart-overlay" class="cart-overlay"></div>
     <aside id="cart-panel" class="cart-panel text-white">
         <header class="cart-header">
@@ -227,7 +224,6 @@
         </footer>
     </aside>
 
-    <!-- =========== MODAL DE DETALHES DO PRODUTO =========== -->
     <div id="details-modal-overlay" class="details-modal-overlay"></div>
     <div id="details-modal" class="details-modal">
         <button id="close-details-modal-btn" class="details-modal-close-btn">&times;</button>
@@ -248,7 +244,6 @@
         </div>
     </div>
 
-    <!-- =========== MODAL DE AUTENTICAÇÃO DE CLIENTE =========== -->
     <div id="auth-modal-overlay" class="details-modal-overlay"></div>
     <div id="auth-modal" class="details-modal" style="max-width: 450px;">
         <button id="close-auth-modal-btn" class="details-modal-close-btn">&times;</button>
@@ -281,7 +276,6 @@
         </div>
     </div>
 
-    <!-- =========== MODAL DE DETALHES SOBRE NÓS (NOVO) =========== -->
     <div id="about-modal-overlay" class="details-modal-overlay"></div>
     <div id="about-modal" class="details-modal">
         <button id="close-about-modal-btn" class="details-modal-close-btn">&times;</button>
@@ -291,16 +285,16 @@
         </div>
     </div>
 
-    <!-- Scripts -->
+    <!-- SCRIPTS -->
     <!-- Carrega os SDKs do Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
     
-    <!-- Carrega nossa configuração central do Firebase (caminho relativo) -->
-    <script src="js/firebase-init.js"></script>
+    <!-- CORREÇÃO: Carrega nossa configuração central do Firebase (caminho absoluto) -->
+    <script src="/js/firebase-init.js"></script>
     
-    <!-- Carrega o script principal da página (caminho relativo) -->
-    <script src="js/main.js"></script>
+    <!-- CORREÇÃO: Carrega o script principal da página (caminho absoluto) -->
+    <script src="/js/main.js"></script>
 </body>
 </html>
