@@ -1,5 +1,14 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // --- ELEMENTOS DO DOM ---
+    // Adiciona referências para os novos elementos de modal e toast
+    const confirmModal = document.getElementById('confirm-modal');
+    const confirmModalTitle = document.getElementById('confirm-modal-title');
+    const confirmModalText = document.getElementById('confirm-modal-text');
+    const confirmOkBtn = document.getElementById('confirm-ok-btn');
+    const confirmCancelBtn = document.getElementById('confirm-cancel-btn');
+    const toast = document.getElementById('toast');
+    const toastMessage = document.getElementById('toast-message');
+
+    // --- ELEMENTOS DO DOM (existentes) ---
     const authOverlay = document.getElementById('auth-overlay');
     const loginContainer = document.getElementById('login-container');
     const registerContainer = document.getElementById('register-container');
@@ -37,6 +46,42 @@ document.addEventListener('DOMContentLoaded', function() {
     const socialYoutubeInput = document.getElementById('socialYoutube');
 
     let productsData = [];
+
+    // --- LÓGICA DE NOTIFICAÇÃO (NOVO) ---
+    function showToast(message, isError = false) {
+        toastMessage.textContent = message;
+        toast.style.backgroundColor = isError ? '#E53935' : '#1a1a1a'; // Vermelho para erro, preto para sucesso
+        toast.classList.remove('translate-x-[150%]');
+        setTimeout(() => {
+            toast.classList.add('translate-x-[150%]');
+        }, 3000); // O toast desaparece após 3 segundos
+    }
+
+    // --- LÓGICA DO MODAL DE CONFIRMAÇÃO (NOVO) ---
+    function showConfirmModal(title, text, onConfirm) {
+        confirmModalTitle.textContent = title;
+        confirmModalText.textContent = text;
+        
+        confirmModal.classList.remove('hidden');
+        setTimeout(() => confirmModal.classList.remove('opacity-0'), 10);
+
+        // Limpa ouvintes de eventos antigos para evitar múltiplas execuções
+        const newConfirmOkBtn = confirmOkBtn.cloneNode(true);
+        confirmOkBtn.parentNode.replaceChild(newConfirmOkBtn, confirmOkBtn);
+        
+        newConfirmOkBtn.addEventListener('click', () => {
+            onConfirm();
+            hideConfirmModal();
+        });
+
+        confirmCancelBtn.onclick = hideConfirmModal;
+    }
+
+    function hideConfirmModal() {
+        confirmModal.classList.add('opacity-0');
+        setTimeout(() => confirmModal.classList.add('hidden'), 300);
+    }
+
 
     // --- LÓGICA DAS ABAS ---
     function switchView(viewToShow) {
@@ -87,7 +132,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         } catch (error) {
             console.error("Erro ao carregar configurações:", error);
-            alert("Erro ao carregar configurações: " + error.message);
+            showToast("Erro ao carregar configurações: " + error.message, true);
         }
     }
 
@@ -124,14 +169,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 body: formData,
             });
             if (response.ok) {
-                alert('Configurações salvas com sucesso!');
+                showToast('Configurações salvas com sucesso!');
                 await loadSettings();
             } else {
                 const errorData = await response.json();
                 throw new Error(errorData.message || 'Falha ao salvar configurações.');
             }
         } catch (error) {
-            alert(error.message);
+            showToast(error.message, true);
         }
     });
 
@@ -190,8 +235,8 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             const result = await response.json();
             if (response.ok) {
-                alert('Administrador registado com sucesso! Faça o login.');
-                window.location.reload();
+                showToast('Administrador registado com sucesso! Faça o login.');
+                setTimeout(() => window.location.reload(), 2000);
             } else {
                 registerError.textContent = result.message;
             }
@@ -209,7 +254,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function renderProductList() {
         productList.innerHTML = '';
         if (productsData.length === 0) {
-            productList.innerHTML = `<p class="text-center text-gray-500">Nenhum produto registado ainda.</p>`;
+            productList.innerHTML = `<p class="text-center text-gray-500 p-4">Nenhum produto registado ainda.</p>`;
             return;
         }
         productsData.forEach(product => {
@@ -256,12 +301,12 @@ document.addEventListener('DOMContentLoaded', function() {
         if (product) {
             modalTitle.textContent = 'Editar Produto';
             document.getElementById('product-id').value = product.id;
-            document.getElementById('marca').value = product.marca;
-            document.getElementById('modelo').value = product.modelo;
+            document.getElementById('marca').value = product.marca || '';
+            document.getElementById('modelo').value = product.modelo || '';
             document.getElementById('ano').value = Array.isArray(product.ano) ? product.ano.join(', ') : '';
-            document.getElementById('nomeProduto').value = product.nomeProduto;
-            document.getElementById('descricao').value = product.descricao;
-            document.getElementById('preco').value = product.preco;
+            document.getElementById('nomeProduto').value = product.nomeProduto || '';
+            document.getElementById('descricao').value = product.descricao || '';
+            document.getElementById('preco').value = product.preco || '';
             document.getElementById('videoURL').value = product.videoURL || '';
             document.getElementById('peso').value = product.peso || '';
             document.getElementById('comprimento').value = product.comprimento || '';
@@ -292,19 +337,23 @@ document.addEventListener('DOMContentLoaded', function() {
 
     async function handleDelete(e) {
         const id = e.target.dataset.id;
-        if (confirm('Tem a certeza de que deseja eliminar este produto? Esta ação não pode ser desfeita.')) {
-            try {
-                const response = await fetch(`/api/products/${id}`, { method: 'DELETE' });
-                if (!response.ok) {
-                     const err = await response.json();
-                     throw new Error(err.message || 'Falha ao eliminar.');
+        showConfirmModal(
+            'Eliminar Produto', 
+            'Tem a certeza de que deseja eliminar este produto? Esta ação não pode ser desfeita.',
+            async () => {
+                try {
+                    const response = await fetch(`/api/products/${id}`, { method: 'DELETE' });
+                    if (!response.ok) {
+                         const err = await response.json();
+                         throw new Error(err.message || 'Falha ao eliminar.');
+                    }
+                    showToast('Produto eliminado com sucesso.');
+                    await loadProducts();
+                } catch (error) {
+                    showToast(error.message, true);
                 }
-                alert('Produto eliminado com sucesso.');
-                await loadProducts();
-            } catch (error) {
-                alert(error.message);
             }
-        }
+        );
     }
 
     addProductBtn.addEventListener('click', () => openModal());
@@ -333,12 +382,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 throw new Error(err.message || 'Ocorreu um erro no servidor.');
             }
             
-            alert('Produto salvo com sucesso.');
+            showToast('Produto salvo com sucesso.');
             closeModal();
             await loadProducts();
 
         } catch (error) {
-            alert(`Erro ao salvar: ${error.message}`);
+            showToast(`Erro ao salvar: ${error.message}`, true);
         }
     });
 
