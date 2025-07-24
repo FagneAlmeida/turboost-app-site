@@ -1,0 +1,6 @@
+flask
+gunicorn
+firebase-admin
+requests
+python-dotenv
+mercadopago

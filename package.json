@@ -1,0 +1,16 @@
+{
+  "name": "turboost-app",
+  "version": "1.0.0",
+  "description": "Website para Turboost",
+  "main": "app.py",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:css": "tailwindcss -i ./public/css/style.css -o ./public/css/output.css --minify",
+    "watch:css": "tailwindcss -i ./public/css/style.css -o ./public/css/output.css --watch"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "tailwindcss": "^3.4.1"
+  }
+}

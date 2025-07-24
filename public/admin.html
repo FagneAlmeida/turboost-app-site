@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Turboost</title>
+    <!-- Carrega o nosso CSS compilado, não o CDN -->
+    <link rel="stylesheet" href="/css/output.css">
+    <style>
+        /* Estilos específicos do admin */
+        .tab-btn.active { border-color: #FFC700; background-color: #FFC700; color: #1a1a1a; }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <!-- Todo o seu conteúdo HTML do admin.html vai aqui... -->
+    <!-- ... (formulários de login, tabelas de produtos, etc.) ... -->
+
+    <!-- Scripts Carregados no Final e na Ordem Correta -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    
+    <!-- 1. Carrega a nossa configuração central -->
+    <script src="/js/firebase-init.js"></script>
+    
+    <!-- 2. Carrega a lógica específica da página de administração -->
+    <script src="/js/admin.js"></script>
+</body>
+</html>
