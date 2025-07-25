@@ -1,204 +1,215 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="h-full bg-gray-900">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Turboost</title>
-    <link rel="stylesheet" href="/css/output.css">
+    <title>Painel de Administração - Turboost</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        .tab-btn.active { border-color: #FFC700; background-color: #FFC700; color: #1a1a1a; }
-        .modal-content { transition: transform 0.3s ease-out, opacity 0.3s ease-out; }
+        body { font-family: 'Inter', sans-serif; }
+        .font-anton { font-family: 'Anton', sans-serif; }
+        .sidebar-link { @apply flex items-center p-3 my-1 text-gray-300 rounded-lg hover:bg-gray-700 hover:text-white transition-colors; }
+        .sidebar-link.active { @apply bg-accent text-white; }
+        .btn { @apply inline-block px-6 py-3 text-sm font-bold tracking-wider text-center uppercase transition-transform duration-200 ease-in-out transform rounded-md focus:outline-none; }
+        .btn-accent { @apply text-gray-900 bg-accent hover:bg-yellow-400; }
+        .btn-outline { @apply text-white bg-transparent border-2 border-gray-600 hover:bg-gray-800; }
+        .input-field { @apply w-full px-4 py-2 text-white bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-accent; }
+        .modal-overlay { @apply fixed inset-0 z-40 bg-black bg-opacity-70 transition-opacity duration-300 opacity-0 pointer-events-none; }
+        .modal-overlay.open { @apply opacity-100 pointer-events-auto; }
+        .modal-content { @apply fixed z-50 p-8 overflow-y-auto transition-transform duration-300 -translate-y-full transform bg-gray-900 rounded-lg shadow-xl top-1/2 left-1/2 -translate-x-1/2 max-h-[90vh] w-[95vw] md:w-[80vw] lg:w-[60vw]; }
+        .modal-overlay.open .modal-content { @apply -translate-y-1/2; }
     </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'accent': '#FFC700',
+                        'background': '#121212',
+                    }
+                }
+            }
+        }
+    </script>
 </head>
-<body class="bg-gray-100 text-gray-800">
-
-    <div id="auth-overlay" class="fixed inset-0 bg-gray-900 bg-opacity-80 flex items-center justify-center z-50">
-        <div id="login-container" class="bg-white p-8 rounded-lg shadow-xl max-w-sm w-full hidden opacity-0 -translate-y-5 transition-all duration-300">
-            <h2 class="font-anton text-3xl text-center text-gray-800 mb-6">LOGIN DE ADMINISTRADOR</h2>
-            <form id="login-form" class="space-y-4">
-                <input type="text" id="username" placeholder="Utilizador" class="w-full p-3 border rounded-md focus:ring-2 focus:ring-yellow-500" required>
-                <input type="password" id="password" placeholder="Senha" class="w-full p-3 border rounded-md focus:ring-2 focus:ring-yellow-500" required>
-                <p id="login-error" class="text-red-500 text-sm text-center h-4"></p>
-                <button type="submit" class="w-full bg-yellow-500 text-primary font-bold py-3 rounded-md hover:bg-yellow-600 transition-colors">Entrar</button>
-            </form>
-        </div>
-        <div id="register-container" class="bg-white p-8 rounded-lg shadow-xl max-w-sm w-full hidden opacity-0 -translate-y-5 transition-all duration-300">
-            <h2 class="font-anton text-3xl text-center text-gray-800 mb-6">REGISTAR PRIMEIRO ADMIN</h2>
-            <form id="register-form" class="space-y-4">
-                <input type="text" id="reg-username" placeholder="Crie um Utilizador" class="w-full p-3 border rounded-md" required>
-                <input type="password" id="reg-password" placeholder="Crie uma Senha" class="w-full p-3 border rounded-md" required>
-                <p id="register-error" class="text-red-500 text-sm text-center h-4"></p>
-                <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 rounded-md hover:bg-blue-700">Registar</button>
-            </form>
-        </div>
-    </div>
-
-    <div id="admin-area" class="hidden">
-        <header class="bg-white shadow-md">
-            <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-                <h1 class="text-2xl font-bold">Painel de Administração</h1>
-                <button id="logout-btn" class="text-sm bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600">Sair</button>
-            </div>
-        </header>
-
-        <main class="container mx-auto px-6 py-8">
-            <div class="border-b border-gray-300 mb-6">
-                <nav class="flex space-x-4">
-                    <button id="tab-products" class="tab-btn active font-semibold py-2 px-4 border-b-4 border-transparent hover:border-yellow-500">Produtos</button>
-                    <button id="tab-settings" class="tab-btn font-semibold py-2 px-4 border-b-4 border-transparent hover:border-yellow-500">Configurações</button>
-                </nav>
-            </div>
-
-            <div id="products-view">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-xl font-bold">Gerir Produtos</h2>
-                    <button id="add-product-btn" class="bg-green-500 text-white font-bold py-2 px-4 rounded-md hover:bg-green-600">Adicionar Produto</button>
-                </div>
-                <div id="product-list" class="bg-white rounded-lg shadow">
+<body class="h-full">
+    <!-- Auth Modal -->
+    <div id="auth-modal-overlay" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80">
+        <div id="auth-modal" class="w-full max-w-md p-8 bg-gray-900 border border-gray-700 rounded-lg shadow-xl">
+            <!-- Login View -->
+            <div id="login-view">
+                <h2 class="mb-6 text-3xl font-bold text-center text-white font-anton">Acesso Restrito</h2>
+                <form id="login-form">
+                    <div class="mb-4">
+                        <label for="username" class="block mb-2 text-sm font-medium text-gray-400">Utilizador</label>
+                        <input type="text" id="username" class="input-field" required>
                     </div>
-            </div>
-
-            <div id="settings-view" class="hidden">
-                 <form id="settings-form" class="bg-white p-8 rounded-lg shadow-md space-y-6">
-                    <h3 class="text-xl font-bold text-gray-800 border-b pb-3">Configurações da Loja</h3>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Logotipo</label>
-                            <input type="file" id="logoFile" name="logoFile" class="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-yellow-50 file:text-yellow-700 hover:file:bg-yellow-100">
-                            <img id="preview-logo" class="mt-4 h-16 hidden" alt="Pré-visualização do Logo">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Favicon</label>
-                            <input type="file" id="faviconFile" name="faviconFile" class="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-yellow-50 file:text-yellow-700 hover:file:bg-yellow-100">
-                            <img id="preview-favicon" class="mt-4 h-8 w-8 hidden" alt="Pré-visualização do Favicon">
-                        </div>
+                    <div class="mb-6">
+                        <label for="password" class="block mb-2 text-sm font-medium text-gray-400">Senha</label>
+                        <input type="password" id="password" class="input-field" required>
                     </div>
-
-                    <div>
-                        <h4 class="font-bold text-gray-700">Endereço de Origem (para cálculo de frete)</h4>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2">
-                            <div>
-                                <label for="originCep" class="text-sm">CEP de Origem</label>
-                                <input type="text" id="originCep" name="originCep" class="mt-1 w-full rounded border-gray-300">
-                            </div>
-                            <div>
-                                <label for="companyStreet" class="text-sm">Rua</label>
-                                <input type="text" id="companyStreet" name="companyStreet" class="mt-1 w-full rounded border-gray-300">
-                            </div>
-                             <div>
-                                <label for="companyNumber" class="text-sm">Número</label>
-                                <input type="text" id="companyNumber" name="companyNumber" class="mt-1 w-full rounded border-gray-300">
-                            </div>
-                        </div>
-                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2">
-                             <div>
-                                <label for="companyComplement" class="text-sm">Complemento</label>
-                                <input type="text" id="companyComplement" name="companyComplement" class="mt-1 w-full rounded border-gray-300">
-                            </div>
-                             <div>
-                                <label for="companyNeighborhood" class="text-sm">Bairro</label>
-                                <input type="text" id="companyNeighborhood" name="companyNeighborhood" class="mt-1 w-full rounded border-gray-300">
-                            </div>
-                             <div>
-                                <label for="companyCityState" class="text-sm">Cidade / Estado</label>
-                                <input type="text" id="companyCityState" name="companyCityState" class="mt-1 w-full rounded border-gray-300 bg-gray-100" readonly>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <h4 class="font-bold text-gray-700">Redes Sociais</h4>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2">
-                            <div>
-                                <label for="socialFacebook" class="text-sm">Facebook URL</label>
-                                <input type="url" id="socialFacebook" name="socialFacebook" class="mt-1 w-full rounded border-gray-300">
-                            </div>
-                            <div>
-                                <label for="socialInstagram" class="text-sm">Instagram URL</label>
-                                <input type="url" id="socialInstagram" name="socialInstagram" class="mt-1 w-full rounded border-gray-300">
-                            </div>
-                            <div>
-                                <label for="socialYoutube" class="text-sm">YouTube URL</label>
-                                <input type="url" id="socialYoutube" name="socialYoutube" class="mt-1 w-full rounded border-gray-300">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="pt-4 border-t">
-                        <button type="submit" class="bg-blue-600 text-white font-bold py-2 px-6 rounded hover:bg-blue-700">Salvar Configurações</button>
-                    </div>
+                    <button type="submit" class="w-full btn btn-accent">Entrar</button>
+                    <p id="login-error" class="mt-4 text-sm text-center text-red-500"></p>
                 </form>
             </div>
-        </main>
+            <!-- Register View -->
+            <div id="register-view" class="hidden">
+                 <h2 class="mb-6 text-3xl font-bold text-center text-white font-anton">Registar Primeiro Admin</h2>
+                 <form id="register-form">
+                     <div class="mb-4">
+                         <label for="reg-username" class="block mb-2 text-sm font-medium text-gray-400">Escolha um Utilizador</label>
+                         <input type="text" id="reg-username" class="input-field" required>
+                     </div>
+                     <div class="mb-6">
+                         <label for="reg-password" class="block mb-2 text-sm font-medium text-gray-400">Escolha uma Senha</label>
+                         <input type="password" id="reg-password" class="input-field" required>
+                     </div>
+                     <button type="submit" class="w-full btn btn-accent">Registar</button>
+                     <p id="register-error" class="mt-4 text-sm text-center text-red-500"></p>
+                 </form>
+            </div>
+        </div>
     </div>
 
-    <div id="product-modal" class="fixed inset-0 bg-gray-900 bg-opacity-70 flex items-center justify-center z-40 hidden opacity-0 transition-opacity duration-300">
-        <div class="modal-content bg-white p-8 rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto -translate-y-10">
-            <h2 id="modal-title" class="text-2xl font-bold mb-6">Adicionar Novo Produto</h2>
-            <form id="product-form" class="space-y-4">
-                <input type="hidden" id="product-id">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <input type="text" id="marca" name="marca" placeholder="Marca" class="w-full p-2 border rounded">
-                    <input type="text" id="modelo" name="modelo" placeholder="Modelo" class="w-full p-2 border rounded">
+    <!-- Main Content (hidden until authenticated) -->
+    <div id="main-content" class="hidden h-full">
+        <div class="flex h-full">
+            <!-- Sidebar -->
+            <aside class="flex flex-col w-64 p-4 bg-gray-800 border-r border-gray-700">
+                <div class="flex items-center mb-8">
+                    <img src="https://placehold.co/40x40/FFC700/000000?text=T" alt="Logo" class="w-10 h-10 mr-3 rounded-full" id="admin-logo">
+                    <h1 class="text-2xl font-bold text-white font-anton">TURBOOST</h1>
                 </div>
-                <input type="text" id="ano" name="ano" placeholder="Anos compatíveis (ex: 2020, 2021, 2022)" class="w-full p-2 border rounded">
-                <input type="text" id="nomeProduto" name="nomeProduto" placeholder="Nome do Produto" class="w-full p-2 border rounded" required>
-                <textarea id="descricao" name="descricao" placeholder="Descrição" class="w-full p-2 border rounded" rows="4"></textarea>
-                <input type="number" id="preco" name="preco" placeholder="Preço (ex: 1299.90)" step="0.01" class="w-full p-2 border rounded" required>
-                
-                <label class="font-semibold">Imagens:</label>
-                <input type="file" id="imagemURL1" name="imagemURL1" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:font-semibold file:bg-blue-50 file:text-blue-700">
-                <input type="file" id="imagemURL2" name="imagemURL2" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:font-semibold file:bg-blue-50 file:text-blue-700">
-                <input type="file" id="imagemURL3" name="imagemURL3" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:font-semibold file:bg-blue-50 file:text-blue-700">
-                
-                <label class="font-semibold">URL do Vídeo (YouTube):</label>
-                <input type="url" id="videoURL" name="videoURL" placeholder="https://www.youtube.com/watch?v=..." class="w-full p-2 border rounded">
-
-                <label class="font-semibold">Sons:</label>
-                <input type="file" id="somOriginal" name="somOriginal" class="block w-full text-sm text-gray-500">
-                <input type="file" id="somLenta" name="somLenta" class="block w-full text-sm text-gray-500">
-                <input type="file" id="somAcelerando" name="somAcelerando" class="block w-full text-sm text-gray-500">
-
-                <label class="font-semibold">Dimensões para Frete (cm/kg):</label>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <input type="number" id="peso" name="peso" placeholder="Peso (kg)" step="0.01" class="w-full p-2 border rounded">
-                    <input type="number" id="comprimento" name="comprimento" placeholder="Comprimento" class="w-full p-2 border rounded">
-                    <input type="number" id="altura" name="altura" placeholder="Altura" class="w-full p-2 border rounded">
-                    <input type="number" id="largura" name="largura" placeholder="Largura" class="w-full p-2 border rounded">
+                <nav class="flex-grow">
+                    <a href="#dashboard" class="sidebar-link active" data-section="dashboard-section">
+                        <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                        Dashboard
+                    </a>
+                    <a href="#products" class="sidebar-link" data-section="products-section">
+                       <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                        Produtos
+                    </a>
+                    <a href="#settings" class="sidebar-link" data-section="settings-section">
+                        <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        Configurações
+                    </a>
+                </nav>
+                <div class="mt-auto">
+                    <button id="logout-btn" class="w-full sidebar-link">
+                        <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                        Sair
+                    </button>
                 </div>
-                
-                <div class="flex items-center gap-2">
-                    <input type="checkbox" id="isFeatured" name="isFeatured" class="h-4 w-4 rounded">
-                    <label for="isFeatured">Marcar como Destaque</label>
-                </div>
+            </aside>
 
-                <div class="flex justify-end gap-4 pt-4">
-                    <button type="button" id="cancel-btn" class="bg-gray-300 py-2 px-6 rounded hover:bg-gray-400">Cancelar</button>
-                    <button type="submit" class="bg-blue-600 text-white font-bold py-2 px-6 rounded hover:bg-blue-700">Salvar</button>
+            <!-- Content Area -->
+            <main class="flex-1 p-6 overflow-y-auto text-white lg:p-10">
+                <!-- Dashboard Section -->
+                <section id="dashboard-section" class="content-section">
+                    <h2 class="text-4xl font-bold mb-8 font-anton">Dashboard</h2>
+                    <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                        <div class="p-6 bg-gray-800 rounded-lg">
+                            <h3 class="text-lg font-semibold text-gray-400">Total de Produtos</h3>
+                            <p id="total-products" class="mt-2 text-4xl font-bold text-accent">0</p>
+                        </div>
+                        <!-- Add more stats here -->
+                    </div>
+                </section>
+
+                <!-- Products Section -->
+                <section id="products-section" class="hidden content-section">
+                    <div class="flex items-center justify-between mb-8">
+                        <h2 class="text-4xl font-bold font-anton">Gerir Produtos</h2>
+                        <button id="add-product-btn" class="btn btn-accent">Adicionar Produto</button>
+                    </div>
+                    <div id="product-list" class="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+                        <!-- Product cards will be inserted here -->
+                    </div>
+                </section>
+
+                <!-- Settings Section -->
+                <section id="settings-section" class="hidden content-section">
+                    <h2 class="text-4xl font-bold mb-8 font-anton">Configurações da Loja</h2>
+                    <form id="settings-form" class="p-8 space-y-6 bg-gray-800 rounded-lg">
+                        <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
+                            <div>
+                                <label class="block mb-2 text-sm font-medium text-gray-300">Logotipo</label>
+                                <input type="file" id="logoFile" name="logoFile" class="input-field">
+                                <img id="logo-preview" src="" alt="Pré-visualização do Logo" class="hidden h-16 mt-4 rounded-md">
+                            </div>
+                            <div>
+                                <label class="block mb-2 text-sm font-medium text-gray-300">Favicon</label>
+                                <input type="file" id="faviconFile" name="faviconFile" class="input-field">
+                                <img id="favicon-preview" src="" alt="Pré-visualização do Favicon" class="hidden h-16 mt-4 rounded-md">
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="mb-4 text-xl font-bold">Endereço de Origem (p/ frete)</h3>
+                            <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+                                <input type="text" id="cepOrigem" name="cepOrigem" placeholder="CEP" class="input-field">
+                                <input type="text" id="ruaOrigem" name="ruaOrigem" placeholder="Rua" class="input-field md:col-span-2">
+                                <input type="text" id="numeroOrigem" name="numeroOrigem" placeholder="Número" class="input-field">
+                                <input type="text" id="bairroOrigem" name="bairroOrigem" placeholder="Bairro" class="input-field">
+                                <input type="text" id="cidadeOrigem" name="cidadeOrigem" placeholder="Cidade / Estado" class="input-field">
+                            </div>
+                        </div>
+                         <div>
+                            <h3 class="mb-4 text-xl font-bold">Redes Sociais</h3>
+                            <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+                                <input type="url" id="socialFacebook" name="socialFacebook" placeholder="URL do Facebook" class="input-field">
+                                <input type="url" id="socialInstagram" name="socialInstagram" placeholder="URL do Instagram" class="input-field">
+                                <input type="url" id="socialYoutube" name="socialYoutube" placeholder="URL do YouTube" class="input-field">
+                            </div>
+                        </div>
+                        <div class="pt-4 text-right">
+                            <button type="submit" class="btn btn-accent">Salvar Configurações</button>
+                        </div>
+                    </form>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- Product Modal -->
+    <div id="product-modal-overlay" class="modal-overlay">
+        <div id="product-modal" class="modal-content">
+            <h2 id="modal-title" class="mb-6 text-3xl font-bold text-white font-anton">Adicionar Novo Produto</h2>
+            <form id="product-form">
+                <input type="hidden" id="productId">
+                <!-- Form fields will be here -->
+                <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <input type="text" id="nomeProduto" name="nomeProduto" placeholder="Nome do Produto" class="input-field md:col-span-2" required>
+                    <textarea id="descricao" name="descricao" placeholder="Descrição" class="input-field md:col-span-2" rows="3"></textarea>
+                    <input type="text" id="marca" name="marca" placeholder="Marca" class="input-field">
+                    <input type="text" id="modelo" name="modelo" placeholder="Modelo" class="input-field">
+                    <input type="text" id="ano" name="ano" placeholder="Anos (separados por vírgula)" class="input-field">
+                    <input type="number" step="0.01" id="preco" name="preco" placeholder="Preço (ex: 1299.90)" class="input-field" required>
+                    <input type="text" id="videoURL" name="videoURL" placeholder="URL do Vídeo (YouTube)" class="input-field md:col-span-2">
+                </div>
+                <h3 class="mt-6 mb-2 text-lg font-semibold">Imagens e Sons</h3>
+                <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+                    <div><label class="text-sm">Imagem 1</label><input type="file" name="imagemURL1" class="input-field"></div>
+                    <div><label class="text-sm">Imagem 2</label><input type="file" name="imagemURL2" class="input-field"></div>
+                    <div><label class="text-sm">Imagem 3</label><input type="file" name="imagemURL3" class="input-field"></div>
+                    <div><label class="text-sm">Som Original</label><input type="file" name="somOriginal" class="input-field"></div>
+                    <div><label class="text-sm">Som Lenta</label><input type="file" name="somLenta" class="input-field"></div>
+                    <div><label class="text-sm">Som Acelerando</label><input type="file" name="somAcelerando" class="input-field"></div>
+                </div>
+                 <div class="flex items-center mt-6">
+                    <input id="isFeatured" name="isFeatured" type="checkbox" class="w-4 h-4 rounded text-accent bg-gray-700 border-gray-600 focus:ring-accent">
+                    <label for="isFeatured" class="ml-2 text-sm font-medium text-gray-300">Marcar como Destaque?</label>
+                </div>
+                <div class="flex justify-end gap-4 mt-8">
+                    <button type="button" id="cancel-product-btn" class="btn btn-outline">Cancelar</button>
+                    <button type="submit" class="btn btn-accent">Salvar Produto</button>
                 </div>
             </form>
         </div>
     </div>
-
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
-    <script src="/js/firebase-init.js"></script>
-    <script src="/js/admin.js"></script>
-<div id="confirm-modal" class="fixed inset-0 bg-gray-900 bg-opacity-70 flex items-center justify-center z-50 hidden opacity-0 transition-opacity duration-300">
-    <div class="modal-content bg-white p-6 rounded-lg shadow-xl max-w-sm w-full -translate-y-10">
-        <h3 id="confirm-modal-title" class="text-lg font-bold text-gray-900">Confirmar Ação</h3>
-        <p id="confirm-modal-text" class="text-sm text-gray-600 my-4">Tem a certeza de que deseja continuar?</p>
-        <div class="flex justify-end gap-4">
-            <button id="confirm-cancel-btn" class="bg-gray-300 py-2 px-4 rounded hover:bg-gray-400">Cancelar</button>
-            <button id="confirm-ok-btn" class="bg-red-600 text-white font-bold py-2 px-4 rounded hover:bg-red-700">Confirmar</button>
-        </div>
-    </div>
-</div>
-
-<div id="toast" class="fixed bottom-10 right-10 bg-gray-800 text-white py-3 px-6 rounded-lg shadow-xl transform translate-x-[150%] transition-transform duration-500 ease-in-out z-50">
-    <p id="toast-message">Mensagem de teste!</p>
-</div>
+    
+    <script src="/admin.js"></script>
 </body>
 </html>
