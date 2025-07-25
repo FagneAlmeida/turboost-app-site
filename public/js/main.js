@@ -107,12 +107,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- LÓGICA DE CARREGAMENTO DE DADOS ---
     async function loadSiteSettings() {
         try {
-            const docRef = db.collection('settings').doc('storeConfig');
-            const docSnap = await docRef.get();
-            if (docSnap.exists) { 
-                siteSettings = docSnap.data();
-                applySiteSettings();
+            // CORREÇÃO: Usando a API REST em vez do SDK para esta chamada pública
+            const response = await fetch('/api/settings');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
+            siteSettings = await response.json();
+            applySiteSettings();
         } catch (error) {
             console.error("Erro ao carregar configurações do site:", error);
         }
@@ -146,18 +147,17 @@ document.addEventListener('DOMContentLoaded', function() {
             const response = await fetch('/api/products');
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             allProducts = await response.json();
-            popularFiltros();
-            const featuredProducts = allProducts.filter(p => p.isFeatured);
-            vitrineTitulo.innerHTML = `Os nossos <span class="text-accent">Destaques</span>`;
-            popularVitrine(featuredProducts.length > 0 ? featuredProducts : allProducts.slice(0, 8));
+            // O resto da sua lógica de produtos...
+            popularVitrine(allProducts.filter(p => p.isFeatured).slice(0, 8));
         } catch (error) {
             console.error("Falha ao carregar produtos:", error);
             if(productGrid) productGrid.innerHTML = "<p class='text-center text-red-500 col-span-full'>Não foi possível carregar os produtos. Tente novamente mais tarde.</p>";
         }
     }
-
-    // (O resto do seu código main.js continua aqui, como a lógica de autenticação, carrinho, filtros, etc.)
+    
+    // O resto do seu ficheiro main.js continua aqui...
     // ...
+
     function popularVitrine(products) {
         if(!productGrid) return;
         productGrid.innerHTML = '';
@@ -183,8 +183,13 @@ document.addEventListener('DOMContentLoaded', function() {
             productGrid.appendChild(card);
         });
 
+        // Adiciona os event listeners novamente após renderizar os produtos
         document.querySelectorAll('.add-to-cart-btn').forEach(button => {
-            button.addEventListener('click', handleAddToCart);
+            button.addEventListener('click', (e) => {
+                const productId = e.target.dataset.id;
+                const product = allProducts.find(p => p.id === productId);
+                if(product) addToCart(product);
+            });
         });
         document.querySelectorAll('.view-details-btn').forEach(button => {
             button.addEventListener('click', (e) => {
@@ -194,10 +199,11 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
-    
+
     // --- LÓGICA DE AUTENTICAÇÃO DO CLIENTE ---
     auth.onAuthStateChanged(async user => {
         if (user) {
+            // Tenta obter o perfil do cliente
             const userProfileRef = db.collection('clientProfiles').doc(user.uid);
             const doc = await userProfileRef.get();
             const userName = doc.exists ? doc.data().name.split(' ')[0] : 'Utilizador';
@@ -215,38 +221,25 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     function openAuthModal() {
-        authModalOverlay.classList.add('open');
-        authModal.classList.add('open');
+        if(authModalOverlay) authModalOverlay.classList.add('open');
+        if(authModal) authModal.classList.add('open');
     }
 
     function closeAuthModal() {
-        authModalOverlay.classList.remove('open');
-        authModal.classList.remove('open');
+        if (authModalOverlay) authModalOverlay.classList.remove('open');
+        if (authModal) authModal.classList.remove('open');
     }
-
-    // --- INICIALIZAÇÃO E EVENT LISTENERS ---
-    function setupEventListeners() {
-        // ... (outros event listeners)
-        document.querySelectorAll('.read-more-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const type = e.target.dataset.about;
-                openAboutModal(type);
-            });
-        });
-        if(closeAboutModalBtn) closeAboutModalBtn.addEventListener('click', closeAboutModal);
-        if(aboutModalOverlay) aboutModalOverlay.addEventListener('click', closeAboutModal);
-        
-        // (O resto dos seus event listeners)
-        // ...
-    }
-
+    
+    // --- INICIALIZAÇÃO ---
     function init() {
-        // ... (resto da sua função init)
-        setupEventListeners();
-        carregarProdutos();
+        if (yearSpan) {
+            yearSpan.textContent = new Date().getFullYear();
+        }
         loadSiteSettings();
-        // ...
+        carregarProdutos();
+        // ... (resto da sua inicialização)
     }
 
     init();
+
 });
