@@ -16,36 +16,24 @@ load_dotenv()
 app = Flask(__name__, static_folder='public', static_url_path='')
 app.secret_key = os.getenv('SESSION_SECRET', os.urandom(24))
 
-# --- Bloco de Inicialização do Firebase (Método Robusto) ---
+# --- Bloco de Inicialização do Firebase (Método Robusto e Simplificado) ---
 db = None
 try:
-    # Prioridade 1: Desenvolvimento local com ficheiro
-    if os.path.exists('serviceAccountKey.json'):
+    # Prioridade 1: Variável de ambiente única (Ideal para Vercel/Produção)
+    firebase_creds_json = os.getenv('FIREBASE_CREDENTIALS_JSON')
+    if firebase_creds_json:
+        creds_dict = json.loads(firebase_creds_json)
+        cred = credentials.Certificate(creds_dict)
+        print("SUCESSO: Firebase inicializado com variável de ambiente FIREBASE_CREDENTIALS_JSON.")
+    # Prioridade 2: Ficheiro local (Ideal para Desenvolvimento)
+    elif os.path.exists('serviceAccountKey.json'):
         cred = credentials.Certificate('serviceAccountKey.json')
-        print("Firebase inicializado com serviceAccountKey.json.")
-    # Prioridade 2: Produção (Vercel) com variáveis de ambiente individuais
-    elif os.getenv('FIREBASE_PROJECT_ID'):
-        print("A tentar inicializar a partir de variáveis de ambiente individuais...")
-        firebase_creds_dict = {
-            "type": "service_account",
-            "project_id": os.getenv('FIREBASE_PROJECT_ID'),
-            "private_key_id": os.getenv('FIREBASE_PRIVATE_KEY_ID'),
-            # Substitui o marcador de nova linha para garantir a formatação correta
-            "private_key": os.getenv('FIREBASE_PRIVATE_KEY', '').replace('\\n', '\n'),
-            "client_email": os.getenv('FIREBASE_CLIENT_EMAIL'),
-            "client_id": os.getenv('FIREBASE_CLIENT_ID'),
-            "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-            "token_uri": "https://oauth2.googleapis.com/token",
-            "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-            "client_x509_cert_url": os.getenv('FIREBASE_CLIENT_X509_CERT_URL'),
-            "universe_domain": "googleapis.com"
-        }
-        cred = credentials.Certificate(firebase_creds_dict)
-        print("SUCESSO: Firebase inicializado com variáveis de ambiente individuais.")
+        print("Firebase inicializado com serviceAccountKey.json local.")
     else:
-        print("AVISO CRÍTICO: Nenhuma configuração do Firebase Admin SDK encontrada (nem ficheiro, nem variáveis de ambiente).")
+        print("AVISO CRÍTICO: Nenhuma configuração do Firebase Admin SDK encontrada.")
         raise ValueError("Configuração do Firebase não encontrada.")
 
+    # Inicializa a app com as credenciais e o bucket
     initialize_app(cred, {
         'storageBucket': 'turboost-site-oficial.appspot.com'
     })
