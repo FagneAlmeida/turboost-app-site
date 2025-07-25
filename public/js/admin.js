@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const data = await api.post('/login', { username, password });
 
         if (data.message === 'Login bem-sucedido.') {
-            authModalOverlay.style.display = 'none';
+            authModalOverlay.classList.add('hidden');
             mainContent.classList.remove('hidden');
             loadInitialData();
         } else {
@@ -157,10 +157,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 <img src="${product.imagemURL1 || 'https://placehold.co/600x400/1a1a1a/FFC700?text=IMG'}" class="object-cover w-full h-40 rounded-md">
                 <h3 class="text-xl font-bold">${product.nomeProduto}</h3>
                 <p class="text-sm text-gray-400">Marca: ${product.marca || 'N/A'}</p>
-                <p class="text-lg font-semibold text-accent">R$ ${product.preco ? product.preco.toFixed(2) : '0.00'}</p>
+                <p class="text-lg font-semibold text-accent">R$ ${product.preco ? product.preco.toFixed(2).replace('.', ',') : '0,00'}</p>
                 <div class="flex justify-end gap-2 pt-2 border-t border-gray-700">
                     <button data-id="${product.id}" class="edit-btn btn btn-outline">Editar</button>
-                    <button data-id="${product.id}" class="delete-btn btn btn-accent">Eliminar</button>
+                    <button data-id="${product.id}" class="delete-btn btn btn-danger">Eliminar</button>
                 </div>
             `;
             productListEl.appendChild(card);
@@ -212,7 +212,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if(input.type === 'checkbox') {
                         input.checked = product[key];
                     } else {
-                        input.value = product[key];
+                        input.value = Array.isArray(product[key]) ? product[key].join(', ') : product[key];
                     }
                 }
             });
@@ -236,7 +236,9 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // --- EVENT LISTENERS DE AÇÕES ---
     productListEl.addEventListener('click', (e) => {
-        const target = e.target;
+        const target = e.target.closest('button');
+        if (!target) return;
+
         const productId = target.dataset.id;
 
         if (target.classList.contains('edit-btn')) {
