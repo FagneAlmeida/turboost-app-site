@@ -16,6 +16,7 @@
         .btn { @apply inline-block px-6 py-3 text-sm font-bold tracking-wider text-center uppercase transition-transform duration-200 ease-in-out transform rounded-md focus:outline-none; }
         .btn-accent { @apply text-gray-900 bg-accent hover:bg-yellow-400; }
         .btn-outline { @apply text-white bg-transparent border-2 border-gray-600 hover:bg-gray-800; }
+        .btn-danger { @apply text-white bg-red-600 hover:bg-red-700; }
         .input-field { @apply w-full px-4 py-2 text-white bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-accent; }
         .modal-overlay { @apply fixed inset-0 z-40 bg-black bg-opacity-70 transition-opacity duration-300 opacity-0 pointer-events-none; }
         .modal-overlay.open { @apply opacity-100 pointer-events-auto; }
@@ -36,7 +37,7 @@
     </script>
 </head>
 <body class="h-full">
-    <!-- Auth Modal -->
+    <!-- Auth Modal (Visível por defeito) -->
     <div id="auth-modal-overlay" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80">
         <div id="auth-modal" class="w-full max-w-md p-8 bg-gray-900 border border-gray-700 rounded-lg shadow-xl">
             <!-- Login View -->
@@ -74,7 +75,7 @@
         </div>
     </div>
 
-    <!-- Main Content (hidden until authenticated) -->
+    <!-- Main Content (CORREÇÃO: Escondido por defeito) -->
     <div id="main-content" class="hidden h-full">
         <div class="flex h-full">
             <!-- Sidebar -->
@@ -93,7 +94,7 @@
                         Produtos
                     </a>
                     <a href="#settings" class="sidebar-link" data-section="settings-section">
-                        <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0 3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                         Configurações
                     </a>
                 </nav>
@@ -126,7 +127,7 @@
                         <button id="add-product-btn" class="btn btn-accent">Adicionar Produto</button>
                     </div>
                     <div id="product-list" class="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
-                        <!-- Product cards will be inserted here -->
+                        <!-- Product cards will be inserted here by admin.js -->
                     </div>
                 </section>
 
@@ -178,8 +179,7 @@
         <div id="product-modal" class="modal-content">
             <h2 id="modal-title" class="mb-6 text-3xl font-bold text-white font-anton">Adicionar Novo Produto</h2>
             <form id="product-form">
-                <input type="hidden" id="productId">
-                <!-- Form fields will be here -->
+                <input type="hidden" id="productId" name="productId">
                 <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                     <input type="text" id="nomeProduto" name="nomeProduto" placeholder="Nome do Produto" class="input-field md:col-span-2" required>
                     <textarea id="descricao" name="descricao" placeholder="Descrição" class="input-field md:col-span-2" rows="3"></textarea>
@@ -210,7 +210,6 @@
         </div>
     </div>
     
-    <!-- CORREÇÃO: Alterado o caminho do script de /admin.js para admin.js para ser relativo -->
-    <script src="admin.js"></script>
+    <script src="/js/admin.js"></script>
 </body>
 </html>

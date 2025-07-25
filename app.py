@@ -160,8 +160,19 @@ def logout():
     return jsonify({'message': 'Logout bem-sucedido.'}), 200
 
 # --- ROTAS DE API DE PRODUTOS ---
-# (As suas rotas de produtos, como /api/products, continuam aqui)
-# ...
+@app.route('/api/products', methods=['GET'])
+def get_products():
+    try:
+        products_ref = db.collection('products')
+        products = []
+        for doc in products_ref.stream():
+            product_data = doc.to_dict()
+            product_data['id'] = doc.id
+            products.append(product_data)
+        return jsonify(products), 200
+    except Exception as e:
+        print(f"--- ERRO DETALHADO AO BUSCAR PRODUTOS ---\n{e}\n-----------------------------------------")
+        return jsonify({'message': f'Erro interno ao buscar produtos.'}), 500
 
 # --- ROTAS DE API DE CONFIGURAÇÕES ---
 @app.route('/api/settings', methods=['GET'])
