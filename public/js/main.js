@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // As variáveis 'auth' e 'db' são carregadas a partir de 'firebase-init.js'
+    // As variáveis 'auth' e 'db' serão inicializadas após a configuração ser carregada.
+    let auth, db;
 
     // --- ELEMENTOS DO DOM ---
     const mobileMenuButton = document.getElementById('mobile-menu-button');
@@ -201,24 +202,30 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // --- LÓGICA DE AUTENTICAÇÃO DO CLIENTE ---
-    auth.onAuthStateChanged(async user => {
-        if (user) {
-            // Tenta obter o perfil do cliente
-            const userProfileRef = db.collection('clientProfiles').doc(user.uid);
-            const doc = await userProfileRef.get();
-            const userName = doc.exists ? doc.data().name.split(' ')[0] : 'Utilizador';
-            
-            userGreeting.textContent = `Olá, ${userName}`;
-            userArea.classList.add('hidden');
-            userInfo.classList.remove('hidden');
-            userInfo.classList.add('flex');
-            closeAuthModal();
-        } else {
-            userArea.classList.remove('hidden');
-            userInfo.classList.add('hidden');
-            userInfo.classList.remove('flex');
+    function setupAuthObserver() {
+        if (!auth) {
+            console.warn("Firebase Auth não está inicializado. A autenticação do cliente será desativada.");
+            return;
         }
-    });
+        auth.onAuthStateChanged(async user => {
+            if (user) {
+                // Tenta obter o perfil do cliente
+                const userProfileRef = db.collection('clientProfiles').doc(user.uid);
+                const doc = await userProfileRef.get();
+                const userName = doc.exists ? doc.data().name.split(' ')[0] : 'Utilizador';
+                
+                userGreeting.textContent = `Olá, ${userName}`;
+                userArea.classList.add('hidden');
+                userInfo.classList.remove('hidden');
+                userInfo.classList.add('flex');
+                closeAuthModal();
+            } else {
+                userArea.classList.remove('hidden');
+                userInfo.classList.add('hidden');
+                userInfo.classList.remove('flex');
+            }
+        });
+    }
 
     function openAuthModal() {
         if(authModalOverlay) authModalOverlay.classList.add('open');
@@ -231,7 +238,27 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // --- INICIALIZAÇÃO ---
-    function init() {
+    async function init() {
+        // Carrega a configuração do Firebase de um local seguro antes de qualquer outra coisa
+        try {
+            const response = await fetch('/api/firebase-config'); // Endpoint seguro que criaremos
+            const firebaseConfig = await response.json();
+            
+            // Inicializa o Firebase com a configuração segura
+            const app = firebase.initializeApp(firebaseConfig);
+            auth = firebase.auth();
+            db = firebase.firestore();
+            console.log("Firebase inicializado de forma segura.");
+
+            // Agora que o Firebase está inicializado, podemos configurar o observador de autenticação
+            setupAuthObserver();
+
+        } catch (error) {
+            console.error("FALHA CRÍTICA: Não foi possível carregar a configuração do Firebase.", error);
+            // Poderia mostrar uma mensagem de erro para o utilizador aqui
+            return; // Interrompe a execução se o Firebase não puder ser inicializado
+        }
+
         if (yearSpan) {
             yearSpan.textContent = new Date().getFullYear();
         }
