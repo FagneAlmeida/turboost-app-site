@@ -22,14 +22,6 @@ try:
     # Prioridade 1: Variável de ambiente única (Ideal para Vercel/Produção)
     firebase_creds_json = os.getenv('FIREBASE_CREDENTIALS_JSON')
     if firebase_creds_json:
-        # --- NOVO LOG DE DIAGNÓSTICO ---
-        print("--- DIAGNÓSTICO DA VARIÁVEL DE AMBIENTE ---")
-        print(f"Tipo da variável: {type(firebase_creds_json)}")
-        print(f"Primeiros 50 caracteres: {firebase_creds_json[:50]}")
-        print(f"Últimos 50 caracteres: {firebase_creds_json[-50:]}")
-        print("-----------------------------------------")
-        # --- FIM DO LOG ---
-        
         creds_dict = json.loads(firebase_creds_json)
         cred = credentials.Certificate(creds_dict)
         print("SUCESSO: Firebase inicializado com variável de ambiente FIREBASE_CREDENTIALS_JSON.")
@@ -51,8 +43,6 @@ try:
 except Exception as e:
     # Este log é crucial para a depuração no Vercel
     print(f"ERRO CRÍTICO NA INICIALIZAÇÃO DO FIREBASE: {e}")
-
-# --- O RESTO DO SEU CÓDIGO PERMANECE IGUAL ---
 
 # --- Configuração do SDK do Mercado Pago ---
 MERCADOPAGO_ACCESS_TOKEN = os.getenv("MERCADOPAGO_ACCESS_TOKEN")
@@ -241,6 +231,8 @@ def save_settings():
         db.collection('settings').document('storeConfig').set(settings_data, merge=True)
         return jsonify({'message': 'Configurações guardadas com sucesso.'}), 200
     except Exception as e:
+        # --- CORREÇÃO FEITA AQUI ---
+        print(f"--- ERRO DETALHADO AO GUARDAR CONFIGURAÇÕES ---\n{e}\n-----------------------------------------")
         return jsonify({'message': f'Erro ao guardar configurações: {e}'}), 500
 
 # --- ROTAS DE API DE FRETE E PAGAMENTO ---
