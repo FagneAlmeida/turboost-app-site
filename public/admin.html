@@ -9,8 +9,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Link para o ficheiro CSS unificado e compilado -->
-    <link rel="stylesheet" href="/css/output.css"> 
+    <!-- CORREÇÃO: Caminho relativo para o CSS para evitar erros 404 -->
+    <link rel="stylesheet" href="css/output.css"> 
 </head>
 <body class="h-full admin-body">
 
@@ -253,10 +253,10 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script> <!-- Adicionado para upload de ficheiros -->
 
-    <!-- Carrega a configuração central do Firebase -->
-    <script src="/js/firebase-init.js"></script>
+    <!-- CORREÇÃO: Caminho relativo para o script para evitar erros 404 -->
+    <script src="js/firebase-init.js"></script>
 
-    <!-- Carrega o script principal do painel de administração -->
-    <script src="/js/admin.js"></script>
+    <!-- CORREÇÃO: Caminho relativo para o script para evitar erros 404 -->
+    <script src="js/admin.js"></script>
 </body>
 </html>
