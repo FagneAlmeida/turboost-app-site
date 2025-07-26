@@ -37,6 +37,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const customerLoginView = document.getElementById('customer-login-view');
     const customerRegisterView = document.getElementById('customer-register-view');
     const mainLogoutBtn = document.getElementById('logout-btn');
+    const userArea = document.getElementById('user-area');
+    const userInfo = document.getElementById('user-info');
+    const userGreeting = document.getElementById('user-greeting');
+    const loginFormError = document.getElementById('login-form-error');
+    const registerFormError = document.getElementById('register-form-error');
 
     // --- ESTADO DA APLICAÇÃO ---
     let allProducts = [];
@@ -63,7 +68,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function carregarProdutos() {
-        // Só executa se a grelha de produtos existir na página
         if (!productGrid) return;
         try {
             allProducts = await api.get('/api/products');
@@ -77,7 +81,14 @@ document.addEventListener('DOMContentLoaded', () => {
     function setupAuthObserver() {
         if (!auth) return;
         auth.onAuthStateChanged(user => {
-            // ... (lógica de login/logout do cliente)
+            if (user) {
+                if(userArea) userArea.classList.add('hidden');
+                if(userInfo) userInfo.classList.remove('hidden');
+                if(userGreeting) userGreeting.textContent = `Olá, ${user.displayName || user.email.split('@')[0]}`;
+            } else {
+                if(userArea) userArea.classList.remove('hidden');
+                if(userInfo) userInfo.classList.add('hidden');
+            }
         });
     }
     
@@ -92,17 +103,13 @@ document.addEventListener('DOMContentLoaded', () => {
             db = firebase.firestore();
             console.log("Firebase inicializado de forma segura no cliente (main.js).");
 
-            // Funções que dependem do Firebase
             setupAuthObserver();
             loadSiteSettings();
             carregarProdutos();
-            
-            // Configura os event listeners após o Firebase estar pronto
             setupEventListeners();
 
         } catch (error) {
             console.error("FALHA CRÍTICA: Não foi possível inicializar a aplicação.", error);
-            // Opcional: Mostrar uma mensagem de erro visível para o utilizador
         }
     }
 
@@ -165,14 +172,30 @@ document.addEventListener('DOMContentLoaded', () => {
         if (customerLoginForm) {
             customerLoginForm.addEventListener('submit', e => {
                 e.preventDefault();
-                // ... (lógica de login)
+                const email = e.target.elements['login-email'].value;
+                const password = e.target.elements['login-password'].value;
+                auth.signInWithEmailAndPassword(email, password)
+                    .then(() => closeModal(authModalOverlay, authModal))
+                    .catch(error => {
+                        if(loginFormError) loginFormError.textContent = "Email ou senha inválidos.";
+                    });
             });
         }
         
         if (customerRegisterForm) {
             customerRegisterForm.addEventListener('submit', e => {
                 e.preventDefault();
-                // ... (lógica de registo)
+                const name = e.target.elements['register-name'].value;
+                const email = e.target.elements['register-email'].value;
+                const password = e.target.elements['register-password'].value;
+                auth.createUserWithEmailAndPassword(email, password)
+                    .then(userCredential => {
+                        return userCredential.user.updateProfile({ displayName: name });
+                    })
+                    .then(() => closeModal(authModalOverlay, authModal))
+                    .catch(error => {
+                        if(registerFormError) registerFormError.textContent = error.message;
+                    });
             });
         }
 
