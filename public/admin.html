@@ -12,8 +12,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- CORREÇÃO: Caminho absoluto para o CSS, garantindo que seja encontrado a partir da raiz do site -->
-    <link rel="stylesheet" href="/css/output.css"> 
+    <!-- CORREÇÃO: Caminho relativo para o CSS. Funciona se a pasta 'css' estiver no mesmo nível que admin.html -->
+    <link rel="stylesheet" href="css/output.css"> 
 </head>
 <body class="h-full admin-body">
 
@@ -251,8 +251,8 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
 
-    <!-- CORREÇÃO: Caminhos absolutos para os scripts, garantindo que sejam encontrados a partir da raiz do site -->
-    <script src="/js/firebase-init.js"></script>
-    <script src="/js/admin.js"></script>
+    <!-- CORREÇÃO: Caminhos relativos para os scripts. Funciona se a pasta 'js' estiver no mesmo nível que admin.html -->
+    <script src="js/firebase-init.js"></script>
+    <script src="js/admin.js"></script>
 </body>
 </html>
