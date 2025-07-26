@@ -5,15 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel de Administração - Turboost</title>
     
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- CORREÇÃO DEFINITIVA: Usando o mesmo ficheiro CSS compilado do site principal -->
+    <!-- Carrega o ficheiro de estilos unificado e compilado, garantindo consistência visual -->
     <link rel="stylesheet" href="/css/output.css"> 
 </head>
 <body class="h-full admin-body">
-    <!-- Auth Modal (Estrutura Padronizada) -->
+    <!-- Auth Modal (Estrutura Padronizada e Visível por Defeito) -->
     <div id="auth-modal-overlay" class="modal-overlay open">
         <div id="auth-modal" class="modal-content bg-gray-800 p-8 rounded-lg border border-gray-700" style="max-width: 450px;">
             <!-- Login View -->
@@ -29,7 +30,7 @@
                         <input type="password" id="password" class="input-field" required>
                     </div>
                     <button type="submit" class="w-full btn btn-accent">Entrar</button>
-                    <p id="login-error" class="mt-4 text-sm text-center text-red-500"></p>
+                    <p id="login-error" class="mt-4 text-sm text-center text-red-500 h-4"></p>
                 </form>
             </div>
             <!-- Register View -->
@@ -45,13 +46,13 @@
                          <input type="password" id="reg-password" class="input-field" required>
                      </div>
                      <button type="submit" class="w-full btn btn-accent">Registar</button>
-                     <p id="register-error" class="mt-4 text-sm text-center text-red-500"></p>
+                     <p id="register-error" class="mt-4 text-sm text-center text-red-500 h-4"></p>
                  </form>
             </div>
         </div>
     </div>
 
-    <!-- Main Content (Escondido por defeito) -->
+    <!-- Main Content (Escondido por defeito para uma experiência de carregamento limpa) -->
     <div id="main-content" class="hidden h-full">
         <div class="flex h-full">
             <!-- Sidebar -->
@@ -241,6 +242,13 @@
         </div>
     </div>
     
+    <!-- Scripts do Firebase (necessários para o admin.js) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+
+    <!-- O nosso script principal do painel, que faz a inicialização segura -->
     <script src="/js/admin.js"></script>
 </body>
 </html>
