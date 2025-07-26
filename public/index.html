@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Turboost - Escapamentos de Alta Performance para Motocicletas</title>
+    <title>Turboost - Escapamentos de Alta Performance</title>
     
-    <link id="favicon" rel="icon" href="https://placehold.co/32x32/1a1a1a/FFC700?text=TB" type="image/png">
+    <link id="favicon" rel="icon" href="/favicon.ico" type="image/x-icon">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     
-    <!-- CORREÇÃO: Caminho absoluto para o CSS, garantindo que ele seja encontrado pelo servidor -->
     <link rel="stylesheet" href="/css/output.css">
 </head>
 <body class="antialiased font-roboto bg-primary text-text-light pt-20">
@@ -285,15 +284,12 @@
     </div>
 
     <!-- SCRIPTS -->
-    <!-- Carrega os SDKs do Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <!-- Carrega os SDKs do Firebase (sem inicialização aqui) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     
-    <!-- CORREÇÃO: Carrega nossa configuração central do Firebase (caminho absoluto) -->
-    <script src="/js/firebase-init.js"></script>
-    
-    <!-- CORREÇÃO: Carrega o script principal da página (caminho absoluto) -->
+    <!-- Carrega o nosso script principal que faz a inicialização segura -->
     <script src="/js/main.js"></script>
 </body>
 </html>

@@ -5,12 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Finalizar Compra - Turboost</title>
     
-    <link rel="icon" href="https://placehold.co/32x32/1a1a1a/FFC700?text=TB" type="image/png">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     
-    <!-- Link para o CSS gerado pelo Tailwind -->
     <link rel="stylesheet" href="/css/output.css">
 </head>
 <body class="antialiased bg-bg-light font-roboto">
@@ -19,7 +18,7 @@
     <header class="bg-primary shadow-lg shadow-black/30">
         <div class="container mx-auto px-6 h-20 flex justify-center items-center">
             <a href="/" class="z-10">
-                <img src="https://placehold.co/200x50/1a1a1a/FFC700?text=Turboost" alt="Logotipo Turboost" class="h-12" onerror="this.onerror=null;this.src='https://placehold.co/200x50/1a1a1a/FFC700?text=Turboost';">
+                <img id="header-logo" src="https://placehold.co/200x50/1a1a1a/FFC700?text=Turboost" alt="Logotipo Turboost" class="h-12">
             </a>
         </div>
     </header>
@@ -117,15 +116,12 @@
     </main>
 
     <!-- Scripts -->
-    <!-- Carrega os SDKs do Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <!-- Carrega os SDKs do Firebase (sem inicialização aqui) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     
-    <!-- Carrega nossa configuração central do Firebase -->
-    <script src="/js/firebase-init.js"></script>
-    
-    <!-- Carrega o script da página de checkout -->
+    <!-- Carrega o script da página de checkout que faz a inicialização segura -->
     <script src="/js/checkout.js"></script>
 </body>
 </html>

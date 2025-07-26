@@ -1,23 +1,19 @@
 <!DOCTYPE html>
-<html lang="pt-BR" class="h-full bg-gray-900">
+<html lang="pt-BR" class="h-full bg-background">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel de Administração - Turboost</title>
     
-    <!-- Favicon para evitar erros 404 no browser -->
-    <link rel="icon" href="https://placehold.co/32x32/1a1a1a/FFC700?text=TB" type="image/png">
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- CORREÇÃO: Caminho relativo para o CSS. Funciona se a pasta 'css' estiver no mesmo nível que admin.html -->
-    <link rel="stylesheet" href="css/output.css"> 
+    <!-- CORREÇÃO DEFINITIVA: Usando o mesmo ficheiro CSS compilado do site principal -->
+    <link rel="stylesheet" href="/css/output.css"> 
 </head>
 <body class="h-full admin-body">
-
-    <!-- Auth Modal (usando as classes padronizadas do site para consistência) -->
+    <!-- Auth Modal (Estrutura Padronizada) -->
     <div id="auth-modal-overlay" class="modal-overlay open">
         <div id="auth-modal" class="modal-content bg-gray-800 p-8 rounded-lg border border-gray-700" style="max-width: 450px;">
             <!-- Login View -->
@@ -26,36 +22,36 @@
                 <form id="login-form">
                     <div class="mb-4">
                         <label for="username" class="block mb-2 text-sm font-medium text-gray-400">Utilizador</label>
-                        <input type="email" id="username" class="input-field" required>
+                        <input type="text" id="username" class="input-field" required>
                     </div>
                     <div class="mb-6">
                         <label for="password" class="block mb-2 text-sm font-medium text-gray-400">Senha</label>
                         <input type="password" id="password" class="input-field" required>
                     </div>
                     <button type="submit" class="w-full btn btn-accent">Entrar</button>
-                    <p id="login-error" class="mt-4 text-sm text-center text-red-500 h-4"></p>
+                    <p id="login-error" class="mt-4 text-sm text-center text-red-500"></p>
                 </form>
             </div>
-            <!-- Register View (para o primeiro admin) -->
+            <!-- Register View -->
             <div id="register-view" class="hidden">
                  <h2 class="mb-6 text-3xl font-bold text-center text-white font-anton">Registar Primeiro Admin</h2>
                  <form id="register-form">
                      <div class="mb-4">
-                         <label for="reg-username" class="block mb-2 text-sm font-medium text-gray-400">Escolha um E-mail</label>
-                         <input type="email" id="reg-username" class="input-field" required>
+                         <label for="reg-username" class="block mb-2 text-sm font-medium text-gray-400">Escolha um Utilizador</label>
+                         <input type="text" id="reg-username" class="input-field" required>
                      </div>
                      <div class="mb-6">
                          <label for="reg-password" class="block mb-2 text-sm font-medium text-gray-400">Escolha uma Senha</label>
                          <input type="password" id="reg-password" class="input-field" required>
                      </div>
                      <button type="submit" class="w-full btn btn-accent">Registar</button>
-                     <p id="register-error" class="mt-4 text-sm text-center text-red-500 h-4"></p>
+                     <p id="register-error" class="mt-4 text-sm text-center text-red-500"></p>
                  </form>
             </div>
         </div>
     </div>
 
-    <!-- Conteúdo Principal (escondido por defeito) -->
+    <!-- Main Content (Escondido por defeito) -->
     <div id="main-content" class="hidden h-full">
         <div class="flex h-full">
             <!-- Sidebar -->
@@ -86,9 +82,9 @@
                 </div>
             </aside>
 
-            <!-- Área de Conteúdo -->
+            <!-- Content Area -->
             <main class="flex-1 p-6 overflow-y-auto text-white lg:p-10">
-                <!-- Secção Dashboard -->
+                <!-- Dashboard Section -->
                 <section id="dashboard-section" class="content-section">
                     <h2 class="text-4xl font-bold mb-8 font-anton">Dashboard</h2>
                     <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -99,7 +95,7 @@
                     </div>
                 </section>
 
-                <!-- Secção Produtos -->
+                <!-- Products Section -->
                 <section id="products-section" class="hidden content-section">
                     <div class="flex items-center justify-between mb-8">
                         <h2 class="text-4xl font-bold font-anton">Gerir Produtos</h2>
@@ -109,12 +105,12 @@
                     </div>
                 </section>
 
-                <!-- Secção Configurações -->
+                <!-- Settings Section -->
                 <section id="settings-section" class="hidden content-section">
                     <h2 class="text-4xl font-bold mb-8 font-anton">Configurações da Loja</h2>
                     <form id="settings-form" class="p-8 space-y-8 bg-gray-800 rounded-lg">
                         
-                        <!-- Secção de Branding -->
+                        <!-- Branding Section -->
                         <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
                             <div>
                                 <label for="logoFile" class="block mb-2 text-sm font-medium text-gray-300">Logotipo</label>
@@ -128,7 +124,7 @@
                             </div>
                         </div>
                         
-                        <!-- Secção de Endereço -->
+                        <!-- Address Section -->
                         <div class="pt-6 border-t border-gray-700">
                             <h3 class="mb-4 text-xl font-bold">Endereço de Origem (p/ frete)</h3>
                             <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-5">
@@ -155,7 +151,7 @@
                             </div>
                         </div>
                         
-                        <!-- Secção de Redes Sociais -->
+                        <!-- Social Media Section -->
                          <div class="pt-6 border-t border-gray-700">
                             <h3 class="mb-4 text-xl font-bold">Redes Sociais</h3>
                             <div class="grid grid-cols-1 gap-6 sm:grid-cols-3">
@@ -174,7 +170,7 @@
                             </div>
                         </div>
                         
-                        <!-- Botão de Salvar -->
+                        <!-- Save Button -->
                         <div class="pt-6 text-right border-t border-gray-700">
                             <button type="submit" class="btn btn-accent">Salvar Configurações</button>
                         </div>
@@ -184,11 +180,11 @@
         </div>
     </div>
 
-    <!-- Modal de Produto -->
+    <!-- Product Modal -->
     <div id="product-modal-overlay" class="modal-overlay">
-        <div id="product-modal" class="modal-content bg-gray-800 p-8 rounded-lg border border-gray-700">
+        <div id="product-modal" class="modal-content">
             <h2 id="modal-title" class="mb-6 text-3xl font-bold text-white font-anton">Adicionar Novo Produto</h2>
-            <form id="product-form" class="max-h-[75vh] overflow-y-auto pr-2">
+            <form id="product-form">
                 <input type="hidden" id="productId" name="productId">
                 <div class="space-y-4">
                     <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -218,7 +214,7 @@
                         </div>
                         <div class="md:col-span-2">
                             <label for="videoURL" class="block mb-1 text-sm">URL do Vídeo (YouTube)</label>
-                            <input type="url" id="videoURL" name="videoURL" class="input-field">
+                            <input type="text" id="videoURL" name="videoURL" class="input-field">
                         </div>
                     </div>
                     <div class="pt-4 border-t border-gray-700">
@@ -245,14 +241,6 @@
         </div>
     </div>
     
-    <!-- Scripts essenciais para a aplicação funcionar -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
-
-    <!-- CORREÇÃO: Caminhos relativos para os scripts. Funciona se a pasta 'js' estiver no mesmo nível que admin.html -->
-    <script src="js/firebase-init.js"></script>
-    <script src="js/admin.js"></script>
+    <script src="/js/admin.js"></script>
 </body>
 </html>
