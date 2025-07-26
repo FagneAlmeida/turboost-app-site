@@ -5,17 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel de Administração - Turboost</title>
     
+    <!-- Favicon para evitar erros 404 no browser -->
+    <link rel="icon" href="https://placehold.co/32x32/1a1a1a/FFC700?text=TB" type="image/png">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Caminho para o CSS unificado que contém as classes do Tailwind e os seus estilos personalizados -->
-    <link rel="stylesheet" href="css/output.css"> 
+    <!-- CORREÇÃO: Caminho absoluto para o CSS, garantindo que seja encontrado a partir da raiz do site -->
+    <link rel="stylesheet" href="/css/output.css"> 
 </head>
 <body class="h-full admin-body">
 
     <!-- Auth Modal (usando as classes padronizadas do site para consistência) -->
-    <!-- A classe 'open' é adicionada para que o modal seja visível por defeito ao carregar a página -->
     <div id="auth-modal-overlay" class="modal-overlay open">
         <div id="auth-modal" class="modal-content bg-gray-800 p-8 rounded-lg border border-gray-700" style="max-width: 450px;">
             <!-- Login View -->
@@ -249,8 +251,8 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
 
-    <!-- Caminhos relativos para os scripts para evitar erros 404 -->
-    <script src="js/firebase-init.js"></script>
-    <script src="js/admin.js"></script>
+    <!-- CORREÇÃO: Caminhos absolutos para os scripts, garantindo que sejam encontrados a partir da raiz do site -->
+    <script src="/js/firebase-init.js"></script>
+    <script src="/js/admin.js"></script>
 </body>
 </html>
